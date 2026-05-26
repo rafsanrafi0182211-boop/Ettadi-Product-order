@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real Product Store</title>
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f1f5f9;
+color:#111827;
+}
+
+header{
+background:#0f172a;
+color:white;
+padding:18px 20px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+position:sticky;
+top:0;
+z-index:1000;
+}
+
+.logo{
+font-size:28px;
+font-weight:bold;
+}
+
+.menu-btn{
+font-size:30px;
+cursor:pointer;
+background:#1e293b;
+padding:6px 14px;
+border-radius:10px;
+}
+
+.sidebar{
+position:fixed;
+top:0;
+right:-300px;
+width:280px;
+height:100vh;
+background:#111827;
+padding:20px;
+transition:0.4s;
+z-index:2000;
+}
+
+.sidebar.active{
+right:0;
+}
+
+.sidebar h2{
+color:white;
+margin-bottom:20px;
+}
+
+.sidebar a{
+display:block;
+text-decoration:none;
+color:white;
+padding:14px;
+margin-bottom:10px;
+background:#1f2937;
+border-radius:10px;
+}
+
+.container{
+width:95%;
+max-width:1400px;
+margin:auto;
+padding:30px 0;
+}
+
+.admin-box{
+background:white;
+padding:25px;
+border-radius:20px;
+margin-bottom:40px;
+box-shadow:0 5px 15px rgba(0,0,0,0.08);
+}
+
+.admin-box h2{
+margin-bottom:20px;
+text-align:center;
+}
+
+.input-group{
+margin-bottom:16px;
+}
+
+.input-group label{
+display:block;
+margin-bottom:8px;
+font-weight:bold;
+}
+
+.input-group input,
+.input-group textarea{
+width:100%;
+padding:14px;
+border:1px solid #cbd5e1;
+border-radius:10px;
+font-size:16px;
+}
+
+textarea{
+height:100px;
+resize:none;
+}
+
+.btn{
+width:100%;
+padding:15px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:12px;
+font-size:17px;
+cursor:pointer;
+}
+
+.product-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:25px;
+}
+
+.product-card{
+background:white;
+border-radius:20px;
+overflow:hidden;
+box-shadow:0 5px 15px rgba(0,0,0,0.08);
+}
+
+.product-card img{
+width:100%;
+height:240px;
+object-fit:cover;
+}
+
+.product-info{
+padding:18px;
+}
+
+.product-info h3{
+font-size:24px;
+margin-bottom:10px;
+}
+
+.price{
+font-size:22px;
+color:#16a34a;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.product-info p{
+margin-bottom:15px;
+line-height:1.6;
+}
+
+.qty{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid #cbd5e1;
+margin-bottom:15px;
+}
+
+.order-btn{
+width:100%;
+padding:14px;
+background:#0f172a;
+color:white;
+border:none;
+border-radius:12px;
+cursor:pointer;
+font-size:16px;
+}
+
+.modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.7);
+display:none;
+align-items:center;
+justify-content:center;
+padding:20px;
+z-index:3000;
+}
+
+.modal-box{
+background:white;
+width:100%;
+max-width:500px;
+padding:25px;
+border-radius:20px;
+max-height:95vh;
+overflow:auto;
+position:relative;
+}
+
+.close{
+position:absolute;
+right:18px;
+top:12px;
+font-size:28px;
+cursor:pointer;
+}
+
+.orders-box{
+background:white;
+padding:25px;
+border-radius:20px;
+margin-top:40px;
+box-shadow:0 5px 15px rgba(0,0,0,0.08);
+display:none;
+}
+
+.order-item{
+padding:18px;
+background:#f8fafc;
+border-radius:15px;
+margin-bottom:15px;
+border-left:5px solid #2563eb;
+}
+
+.support-btn{
+position:fixed;
+right:20px;
+bottom:20px;
+width:75px;
+height:75px;
+border-radius:50%;
+background:#25D366;
+color:white;
+font-size:34px;
+display:flex;
+align-items:center;
+justify-content:center;
+text-decoration:none;
+box-shadow:0 5px 15px rgba(0,0,0,0.3);
+z-index:5000;
+}
+
+.support-text{
+position:fixed;
+right:8px;
+bottom:0px;
+font-size:12px;
+background:white;
+padding:4px 8px;
+border-radius:8px;
+box-shadow:0 2px 10px rgba(0,0,0,0.15);
+z-index:5001;
+font-weight:bold;
+}
+
+footer{
+margin-top:60px;
+background:#0f172a;
+color:white;
+text-align:center;
+padding:25px;
+}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">Real Online Shop</div>
+<div class="menu-btn" onclick="toggleMenu()">☰</div>
+</header>
+
+<div class="sidebar" id="sidebar">
+<h2>Menu</h2>
+<a href="#">Home</a>
+<a href="#products">Products</a>
+<a href="#" onclick="showOrders()">My Orders</a>
+<a href="#footer">Contact</a>
+</div>
+
+<div style="background:url('https://images.unsplash.com/photo-1522199755839-a2bacb67c546?q=80&w=1400&auto=format&fit=crop') center/cover;height:320px;display:flex;align-items:center;justify-content:center;color:white;text-align:center;">
+<div style="background:rgba(0,0,0,0.6);padding:30px;border-radius:20px;">
+<h1 style="font-size:45px;margin-bottom:10px;">Welcome To Real Online Shop</h1>
+<p style="font-size:18px;">সব ধরনের product সহজে order করুন</p>
+</div>
+</div>
+
+<div class="container">
+
+<div style="margin-bottom:25px;">
+<input type="text" id="searchBox" placeholder="Search products..." style="width:100%;padding:16px;border-radius:14px;border:1px solid #cbd5e1;font-size:16px;">
+</div>
+
+<div class="admin-box">
+<h2>Add Your Product</h2>
+
+<div class="input-group">
+<label>Product Name</label>
+<input type="text" id="pname">
+</div>
+
+<div class="input-group">
+<label>Product Price</label>
+<input type="number" id="pprice">
+</div>
+
+<div class="input-group">
+<label>Product Description</label>
+<textarea id="pdesc"></textarea>
+</div>
+
+<div class="input-group">
+<label>Product Image</label>
+<input type="file" id="pimage" accept="image/*">
+</div>
+
+<button class="btn" onclick="addProduct()">Add Product</button>
+</div>
+
+<div class="product-grid" id="products"></div>
+
+<div class="orders-box" id="ordersBox">
+<h2 style="margin-bottom:20px;text-align:center;">Customer Orders (Only Admin Can See)</h2>
+<div id="ordersList"></div>
+</div>
+
+<div style="background:white;padding:20px;border-radius:20px;margin-top:30px;box-shadow:0 5px 15px rgba(0,0,0,0.08);">
+<h2 style="text-align:center;margin-bottom:20px;">Recent Customer Ordered Products</h2>
+<div id="recentOrdersProducts" class="product-grid"></div>
+</div>
+
+<div class="orders-box" id="cartSection">
+<h2 style="margin-bottom:20px;text-align:center;">Customer Cart</h2>
+<div id="cartItems"></div>
+<div id="cartTotal" style="font-size:22px;font-weight:bold;margin-top:20px;"></div>
+</div>
+
+<div class="orders-box" id="ordersBox">
+<h2 style="margin-bottom:20px;text-align:center;">Customer Orders (Only Admin Can See)</h2>
+<div id="ordersList"></div>
+</div>
+
+</div>
+
+<div class="modal" id="orderModal">
+<div class="modal-box">
+<span class="close" onclick="closeModal()">×</span>
+<h2 style="margin-bottom:20px;text-align:center;">Place Order</h2>
+
+<div class="input-group">
+<label>Product</label>
+<input type="text" id="orderProduct" readonly>
+</div>
+
+<div class="input-group">
+<label>Quantity</label>
+<input type="text" id="orderQty" readonly>
+</div>
+
+<div class="input-group">
+<label>Total Price</label>
+<input type="text" id="orderTotal" readonly>
+</div>
+
+<div class="input-group">
+<label>Your Name</label>
+<input type="text" id="cname">
+</div>
+
+<div class="input-group">
+<label>Your Mobile Number</label>
+<input type="text" id="cphone">
+</div>
+
+<div class="input-group">
+<label>Your Address</label>
+<textarea id="caddress"></textarea>
+</div>
+
+<div class="input-group">
+<label>Email Address</label>
+<input type="email" id="cemail">
+</div>
+
+<div class="input-group">
+<label>Delivery Note</label>
+<textarea id="cnote"></textarea>
+</div>
+
+<button class="btn" onclick="placeOrder()">Confirm Order</button>
+
+</div>
+</div>
+
+<a class="support-btn" href="https://wa.me/8801980801879" target="_blank">💬</a>
+<div class="support-text">Customer Support</div>
+
+<footer id="footer">
+<h3>Professional Ecommerce Website</h3>
+<p>WhatsApp Support: 01980801879</p>
+</footer>
+
+<script>
+let currentProduct='';
+let currentPrice=0;
+
+function toggleMenu(){
+document.getElementById('sidebar').classList.toggle('active');
+}
+
+function addProduct(){
+const name=document.getElementById('pname').value;
+const price=document.getElementById('pprice').value;
+const desc=document.getElementById('pdesc').value;
+const image=document.getElementById('pimage').files[0];
+
+if(!name || !price || !desc || !image){
+alert('সব তথ্য দিন');
+return;
+}
+
+const imageUrl=URL.createObjectURL(image);
+
+const card=document.createElement('div');
+card.classList.add('product-card');
+
+card.innerHTML=`
+<img src="${imageUrl}">
+<div class="product-info">
+<h3>${name}</h3>
+<div class="price">৳${price}</div>
+<p>${desc}</p>
+<input type="number" class="qty" min="1" value="1">
+<button class="order-btn" onclick="addToCart('${name}',${price},this)" style="margin-bottom:10px;background:#16a34a;">Add To Cart</button>
+<button class="order-btn" onclick="openModal('${name}',${price},this)">Order Now</button>
+</div>
+`;
+
+document.getElementById('products').prepend(card);
+
+document.getElementById('pname').value='';
+document.getElementById('pprice').value='';
+document.getElementById('pdesc').value='';
+document.getElementById('pimage').value='';
+
+alert('Product Added Successfully');
+}
+
+function openModal(name,price,btn){
+const qty=btn.parentElement.querySelector('.qty').value;
+currentProduct=name;
+currentPrice=price;
+
+document.getElementById('orderModal').style.display='flex';
+document.getElementById('orderProduct').value=name;
+document.getElementById('orderQty').value=qty;
+document.getElementById('orderTotal').value='৳'+(price*qty);
+}
+
+function closeModal(){
+document.getElementById('orderModal').style.display='none';
+}
+
+function placeOrder(){
+const product=document.getElementById('orderProduct').value;
+const qty=document.getElementById('orderQty').value;
+const total=document.getElementById('orderTotal').value;
+const name=document.getElementById('cname').value;
+const phone=document.getElementById('cphone').value;
+const address=document.getElementById('caddress').value;
+const email=document.getElementById('cemail').value;
+const note=document.getElementById('cnote').value;
+
+if(!name || !phone || !address || !email){
+alert('সব তথ্য পূরণ করুন');
+return;
+}
+
+const order=document.createElement('div');
+order.classList.add('order-item');
+
+order.innerHTML=`
+<h3>${product}</h3>
+<p><strong>Customer:</strong> ${name}</p>
+<p><strong>Phone:</strong> ${phone}</p>
+<p><strong>Email:</strong> ${email}</p>
+<p><strong>Address:</strong> ${address}</p>
+<p><strong>Delivery Note:</strong> ${note}</p>
+<p><strong>Quantity:</strong> ${qty}</p>
+<p><strong>Total:</strong> ${total}</p>
+`;
+
+document.getElementById('ordersList').prepend(order);
+
+const orderedProduct=document.createElement('div');
+orderedProduct.classList.add('product-card');
+
+orderedProduct.innerHTML=`
+<div class="product-info">
+<h3>${product}</h3>
+<div class="price">${total}</div>
+<p><strong>Customer:</strong> ${name}</p>
+<p><strong>Quantity:</strong> ${qty}</p>
+<p>এই product টি customer order করেছে</p>
+</div>
+`;
+
+document.getElementById('recentOrdersProducts').prepend(orderedProduct);
+
+const message=`Hello ${name}, আপনার order নেওয়া হয়েছে.%0A%0AProduct: ${product}%0AQuantity: ${qty}%0ATotal: ${total}%0A%0Aধন্যবাদ।`;
+window.open(`https://wa.me/88${phone}?text=${message}`,'_blank');
+
+alert('Order successful');
+closeModal();
+
+document.getElementById('cname').value='';
+document.getElementById('cphone').value='';
+document.getElementById('caddress').value='';
+}
+
+document.getElementById('searchBox').addEventListener('keyup',function(){
+const value=this.value.toLowerCase();
+const cards=document.querySelectorAll('.product-card');
+
+cards.forEach(card=>{
+const text=card.innerText.toLowerCase();
+card.style.display=text.includes(value)?'block':'none';
+});
+});
+
+let cart=[];
+
+function addToCart(name,price,btn){
+const qty=btn.parentElement.querySelector('.qty').value;
+cart.push({name,price,qty});
+renderCart();
+alert('Product Added To Cart');
+}
+
+function renderCart(){
+const cartItems=document.getElementById('cartItems');
+cartItems.innerHTML='';
+
+let total=0;
+
+cart.forEach(item=>{
+const div=document.createElement('div');
+div.classList.add('order-item');
+
+const subtotal=item.price*item.qty;
+total+=subtotal;
+
+ div.innerHTML=`
+ <h3>${item.name}</h3>
+ <p>Quantity: ${item.qty}</p>
+ <p>Price: ৳${subtotal}</p>
+ `;
+
+ cartItems.appendChild(div);
+});
+
+document.getElementById('cartTotal').innerHTML='Total Cart Price: ৳'+total;
+}
+
+function showCart(){
+document.getElementById('cartSection').style.display='block';
+window.scrollTo({top:document.getElementById('cartSection').offsetTop,behavior:'smooth'});
+}
+
+function showOrders(){
+document.getElementById('ordersBox').style.display='block';
+window.scrollTo({top:document.getElementById('ordersBox').offsetTop,behavior:'smooth'});
+}
+</script>
+
+</body>
+</html>
